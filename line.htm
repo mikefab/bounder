@@ -1,0 +1,460 @@
+<html>
+	<head>
+     <script type="text/javascript" src="ModalPopups.js"></script> 
+<script>
+
+function ModalPopupsConfirm() {  
+
+    ModalPopups.Confirm("idConfirm1",  
+        "Confirm save location",  
+        "<div style='padding: 25px;'>Are you *sure* you want to delete this line, Sokha?</div>",   
+        {  
+            yesButtonText: "Yes",  
+            noButtonText: "No",  
+            onYes: "ModalPopupsConfirmYes()",  
+            onNo: "ModalPopupsConfirmNo()"  
+        }  
+    );  
+}  
+function ModalPopupsConfirmYes() {  
+
+JavaScript:xmlhttpPost('remove_line.pl');
+
+  ModalPopups.Close("idConfirm1");  
+
+}  
+function ModalPopupsConfirmNo() {  
+    ModalPopups.Cancel("idConfirm1");  
+
+}  
+
+
+
+function xmlhttpPost(strURL) {
+
+    var xmlHttpReq = false;
+    var self = this;
+    // Mozilla/Safari
+    if (window.XMLHttpRequest) {
+        self.xmlHttpReq = new XMLHttpRequest();
+    }
+    // IE
+    else if (window.ActiveXObject) {
+        self.xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    self.xmlHttpReq.open('POST', strURL, true);
+    self.xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    self.xmlHttpReq.onreadystatechange = function() {
+        if (self.xmlHttpReq.readyState == 4) {
+            updatepage(self.xmlHttpReq.responseText,strURL);
+        }
+    }
+    self.xmlHttpReq.send(getquerystring(strURL));
+}
+
+function getquerystring(strURL){
+	if(strURL.match(/save/)){
+		var form = document.forms['form_line'];
+		var save_path = parent.frames['list'].document.getElementById('geo_path').value;
+		var file_name = parent.frames['list'].document.getElementById('select_geo').value;
+		if(strURL.match(/save_line/)){
+			var num = document.getElementById('screen_num').value;
+		}
+		if(strURL.match(/save_word/)){
+			var num = document.getElementById('select_lines').value;
+		}
+		var word_num = document.getElementById('word_num').value;
+		var x1 = form.x1.value;
+		var y1 = form.y1.value;
+		var h = form.h.value;
+		var w = form.w.value;
+	  var rotation = parent.frames['list'].document.getElementById('rotate').innerHTML;
+	  var zoom = parent.frames['list'].document.getElementById('image_zoom').innerHTML;
+		qstr = 'save_path=' + escape(save_path);  // NOTE: no '?' before querystring
+		qstr = qstr +'&file_name=' + escape(file_name);  // NOTE: no '?' before querystring
+		qstr = qstr +'&num=' + escape(num);  // NOTE: no '?' before querystring
+		qstr = qstr +'&word_num=' + escape(word_num);  // NOTE: no '?' before querystring
+		qstr = qstr +'&x1=' + escape(x1);  // NOTE: no '?' before querystring
+		qstr = qstr +'&y1=' + escape(y1);  // NOTE: no '?' before querystring
+		qstr = qstr +'&h=' + escape(h);  // NOTE: no '?' before querystring
+		qstr = qstr +'&w=' + escape(w);  // NOTE: no '?' before querystring
+		qstr = qstr +'&rotation=' + escape(rotation);  // NOTE: no '?' before querystring
+		qstr = qstr +'&zoom=' + escape(zoom);  // NOTE: no '?' before querystring
+	}else if(strURL.match(/(remove_line|load_words)/)){
+
+		var num = document.getElementById('select_lines').value;
+		var save_path = parent.frames['list'].document.getElementById('geo_path').value;
+		var file_name = parent.frames['list'].document.getElementById('select_geo').value;
+		qstr = 'save_path=' + escape(save_path);  // NOTE: no '?' before querystring
+		qstr = qstr +'&file_name=' + escape(file_name);  // NOTE: no '?' before querystring
+		qstr = qstr +'&num=' + escape(num);  // NOTE: no '?' before querystring
+	}else if(strURL.match(/remove_word/)){
+		var num = document.getElementById('select_words').value;
+		var save_path = parent.frames['list'].document.getElementById('geo_path').value;
+		var file_name = parent.frames['list'].document.getElementById('select_geo').value;
+		qstr = 'save_path=' + escape(save_path);  // NOTE: no '?' before querystring
+		qstr = qstr +'&file_name=' + escape(file_name);  // NOTE: no '?' before querystring
+		qstr = qstr +'&num=' + escape(num);  // NOTE: no '?' before querystring
+	}
+
+		return qstr;
+}
+
+function updatepage(str,strURL){
+	if(strURL.match(/save_line/)){
+
+		parent.frames['list'].xmlhttpPost('load_lines.pl');
+
+
+	}else if(strURL.match(/remove_line/)){
+		parent.frames['list'].xmlhttpPost('load_lines.pl');
+	}else if(strURL.match(/remove_word/)){
+
+		xmlhttpPost('load_words.pl');
+
+	}else if (strURL.match(/load_lines/)){
+
+	}else if(strURL.match(/save_word/)){
+
+		load_words(document.getElementById('select_lines').value);
+
+	}else if(strURL.match(/load_words/)){
+		document.getElementById('words_section').style.display="inline";		
+		document.getElementById('div_select_words').innerHTML=str;		
+	}
+}
+
+function save_word(){
+	xmlhttpPost('save_word.pl');
+}
+
+
+function remove_word_box(){
+main_or_word="main";
+//	xmlhttpPost('save_word.pl');
+	parent.frames['mapper'].dragresize.maxTop=5000;
+	parent.frames['mapper'].dragresize.maxLeft=10000;
+	parent.frames['mapper'].dragresize.minTop=0;
+	parent.frames['mapper'].dragresize.minLeft=0;
+	parent.frames['mapper'].dragresize.minHeight=0;
+	parent.frames['mapper'].dragresize.minwidth=0;
+	parent.frames['mapper'].document.getElementById('div_main').style.display="inline";
+
+	for(i=0;i<20;i++){
+		try {
+			var temp =	parent.frames['mapper'].document.getElementById('div_word');
+	  	parent.frames['mapper'].document.body.removeChild(temp);
+			var temp =	parent.frames['mapper'].document.getElementById('div_temp');
+	  	parent.frames['mapper'].document.body.removeChild(temp);
+		} catch (e) {
+			if (e instanceof TypeError){
+				alert("Bad or undefined variable!");
+			}
+		}
+	}
+}
+
+
+function display_word(lines_or_words){
+
+	try {
+		var temp =	parent.frames['mapper'].document.getElementById('word');
+
+  	parent.frames['mapper'].document.body.removeChild(temp);
+	} catch (e) {
+		if (e instanceof TypeError){
+			alert("Bad or undefined variable!");
+		}
+
+	}
+	main_or_word = "word";
+	var border_width = parent.frames['mapper'].document.getElementById('div_main').style.borderWidth.replace(/px/,"");
+	parent.frames['mapper'].document.getElementById('div_main').style.display="none";
+	var menu= document.getElementById(lines_or_words);
+	var index = menu.selectedIndex;
+	var x1 = menu.options[index].getAttribute('x1') * parent.frames['list'].document.getElementById('image_zoom').innerHTML;
+	var y1 = menu.options[index].getAttribute('y1') * parent.frames['list'].document.getElementById('image_zoom').innerHTML;
+	var x2 = menu.options[index].getAttribute('x2') * parent.frames['list'].document.getElementById('image_zoom').innerHTML;
+	var y2 = menu.options[index].getAttribute('y2') * parent.frames['list'].document.getElementById('image_zoom').innerHTML;
+//  var h = temp_y2 - temp_y1;
+//	var w = temp_x2 - temp_x1;
+  var h = y2 - y1;
+	var w = x2 - x1;
+
+
+  var temp =document.createElement('div');
+	temp.id="div_temp";
+  temp.setAttribute("style", "position:absolute;left: " + x1 + "px; top: " + y1 + "px; width: " + w + "px; height: " + h + "px;  border:"+ border_width + "px solid; border-color:orange;");
+//	x1+= parseInt(border_width);
+//	y1+= parseInt(border_width);
+//	h-=parseInt(2);
+//	w=w-5
+
+  var word =document.createElement('div');
+	word.id="div_word";
+	word.setAttribute("onDblClick","parent.frames['line'].save_word(); parent.frames['line'].wait_and_next_word();");
+ 	word.setAttribute("style", "position:absolute;left: " + x1 + "px; top: " + y1 + "px; width: " + w + "px; height: " + h + "px;  border:"+ border_width + "px solid; border-color:red;");
+//  word.setAttribute("class","drsElement drsMoveHandle"); 
+  word.setAttribute("class","drsElement"); 
+  word.setAttribute("onmouseup","this.style.height='"+ h + "px';");
+ 	parent.frames['mapper'].document.body.appendChild(temp);
+
+//Set line boundaries
+	var menu= document.getElementById('select_lines');
+	var index = menu.selectedIndex;
+	var x1 = menu.options[index].getAttribute('x1') * parent.frames['list'].document.getElementById('image_zoom').innerHTML;
+	var y1 = menu.options[index].getAttribute('y1') * parent.frames['list'].document.getElementById('image_zoom').innerHTML;
+	var x2 = menu.options[index].getAttribute('x2') * parent.frames['list'].document.getElementById('image_zoom').innerHTML;
+	var y2 = menu.options[index].getAttribute('y2') * parent.frames['list'].document.getElementById('image_zoom').innerHTML;
+//  var h = temp_y2 - temp_y1;
+//	var w = temp_x2 - temp_x1;
+  var h = y2 - y1;
+	var w = x2 - x1;
+	parent.frames['mapper'].dragresize.maxTop=y2;
+	parent.frames['mapper'].dragresize.maxLeft=x2;
+	parent.frames['mapper'].dragresize.minTop=y1;
+	parent.frames['mapper'].dragresize.minLeft=x1;
+	parent.frames['mapper'].dragresize.minHeight=h;
+	parent.frames['mapper'].dragresize.minwidth=w;
+ 	parent.frames['mapper'].document.body.appendChild(word);
+}
+
+function wait_and_next_word(){
+	setTimeout("parent.frames['line'].next_word();",1500);
+}
+
+function do_line_change(index,value){
+	var menu= document.getElementById('select_lines');
+  document.getElementById('screen_num').value= value;
+	temp_x1 = menu.options[index].getAttribute('x1') * parent.frames['list'].document.getElementById('image_zoom').innerHTML;
+	temp_y1 = menu.options[index].getAttribute('y1') * parent.frames['list'].document.getElementById('image_zoom').innerHTML;
+	temp_x2 = menu.options[index].getAttribute('x2') * parent.frames['list'].document.getElementById('image_zoom').innerHTML;
+	temp_y2 = menu.options[index].getAttribute('y2') * parent.frames['list'].document.getElementById('image_zoom').innerHTML;
+  var line_height = temp_y2 - temp_y1;
+  var line_width = temp_x2 - temp_x1;
+  var line_height_zoomed =line_height * parseInt(parent.frames['list'].document.getElementById('zoomString').innerHTML);
+  var line_width_zoomed =line_width * parseInt(parent.frames['list'].document.getElementById('zoomString').innerHTML);
+  var screen_top = parent.frames['mapper'].document.getElementById('head').parentNode.scrollTop;
+  var screen_bottom    = parent.frames['mapper'].document.getElementById('head').parentNode.scrollTop + parent.frames['mapper'].window.innerHeight;
+  var screen_left = parent.frames['mapper'].document.getElementById('head').parentNode.scrollLeft;
+  var screen_right    = parent.frames['mapper'].document.getElementById('head').parentNode.scrollLeft + parent.frames['mapper'].window.innerWidth;
+  var new_scroll_left =screen_left;
+  var new_scroll_top = screen_top;
+  var y1            = temp_y1 * parent.frames['list'].document.getElementById('zoomString').innerHTML;
+  var y2            = y1+line_height_zoomed;
+  var x1            = temp_x1 * parent.frames['list'].document.getElementById('zoomString').innerHTML;
+  var x2            = x1+line_width_zoomed;
+
+  buffer_percent_of_line_height = line_height_zoomed*1;//Not sure why I need to add this.Seems necessary other wise lose bottom half of box sometimes.
+  if(y1>screen_top && (y2+buffer_percent_of_line_height)<screen_bottom){
+	}else{
+	  if(line_height_zoomed>(parent.frames['mapper'].window.innerHeight/2)){
+		new_scroll_top = y1;
+	  }else{
+		new_scroll_top = y1 - ((parent.frames['mapper'].window.innerHeight-line_height)/2)
+	 }
+	}
+	if(x1>screen_left && x2<screen_right){
+		}else{
+		if(line_width_zoomed>(parent.frames['mapper'].window.innerWidth/2)){
+			new_scroll_left = x1;
+		}else{
+			new_scroll_left = x1 - ((parent.frames['mapper'].window.innerWidth-line_width)/2)
+		}
+	}
+	parent.frames['mapper'].scrollTo(new_scroll_left,new_scroll_top)
+	parent.frames['list'].rotate(menu.options[index].getAttribute("rotation"));
+	parent.frames['mapper'].document.getElementById('div_main').style.left = temp_x1 + 'px';
+	parent.frames['mapper'].document.getElementById('div_main').style.top  = temp_y1 + 'px';
+	parent.frames['mapper'].document.getElementById('div_main').style.width = line_width + 'px';
+	parent.frames['mapper'].document.getElementById('div_main').style.height  = line_height + 'px';
+
+	document.getElementById('x1').value=temp_x1;
+	document.getElementById('y1').value=temp_y1;
+	document.getElementById('w').value=line_width;
+	document.getElementById('h').value=line_height;
+	//	alert(line_height + " " + (parent.frames['mapper'].window.innerHeight/2));
+}
+
+function next_line(){
+	var menu= document.getElementById('select_lines');
+  var current_item = menu.options[menu.length-1].value;
+
+	if (current_item.match(/[a-zA-Z]/)){
+		current_num = current_item.match(/\d+/);
+		current_num++;
+		document.getElementById('screen_num').value = current_num + "a";		
+	}else{
+		current_item++;
+		document.getElementById('screen_num').value = current_item;		
+	}
+}
+
+function next_word(){
+	var menu= document.getElementById('select_words');
+				current_item=1;
+		try {
+
+		  var current_item = parseInt(menu.options[menu.options.length-1].value.replace(/\d+\./,""));
+		current_item++;
+
+		} catch (e) {
+			if (e instanceof TypeError){
+
+			}
+		}
+
+
+
+
+	document.getElementById('word_num').value = current_item;		
+}
+
+
+function next_column(){
+	var menu= document.getElementById('select_lines');
+	var number = menu.options[menu.length-1].value.match(/\d+/);
+	var letter = tester(menu.options[menu.length-1].value.match(/[a-zA-Z]/));
+	document.getElementById('screen_num').value = number+letter;
+}
+
+function remove_option(){
+  if(parent.list.window.location.href.match(/geo_path/)){
+		document.getElementById('current_folder').value  = parent.frames.list.document.getElementById('select_geo').value
+    document.getElementById('file_name').value  = parent.frames.list.document.getElementById('select_geo').value;
+    document.getElementById('save_path').value = parent.frames.list.document.getElementById('geo_path').value;
+  }else{
+
+//      document.getElementById('current_folder').value  = parent.frames.list.document.getElementById('select_dir').value
+		document.getElementById('current_folder').value = parent.frames.list.image_name;
+    document.getElementById('file_name').value  = parent.frames.list.document.getElementById('file_name').innerHTML;
+    document.getElementById('images_path').value = parent.frames.list.document.getElementById('images_path').value;
+    document.getElementById('save_path').value = parent.frames.list.document.getElementById('save_path').value;
+ 	}
+	
+
+	document.getElementById('delete_target').value = document.getElementById('screen_num').value;
+	document.form_line.submit(0);
+}
+
+function load_words(num){
+	xmlhttpPost('load_words.pl');
+}
+
+
+function show_word_box(){
+		try {
+			if(document.getElementById('select_lines').value.length!=0){
+				remove_word_box();document.getElementById('words_section').style.display='inline';
+				display_word('select_lines');
+				document.getElementById('show_word').style.display='none';
+				document.getElementById('hide_word').style.display='inline';
+				document.getElementById('word_panel').style.display='inline';		
+			}
+		} catch (e) {
+			if (e instanceof TypeError){
+				alert("You must first select a line");
+			}
+		}
+}
+
+function load_lines_onChange(){
+	document.getElementById('word_panel').style.display='inline';
+	document.getElementById('delete_line').style.display='inline';
+	document.getElementById('delete_word').style.display='none';
+	document.getElementById('hide_word').click();
+	setTimeout("document.getElementById('next_word').click();",1000);
+	main_or_word='main';
+	remove_word_box();	
+	load_words(document.getElementById('select_lines').value);
+	do_line_change(document.getElementById('select_lines').selectedIndex,document.getElementById('select_lines').value);
+}
+
+function check_word_boxes(){
+	if(parent.frames['selector'].flag_words_on==1){
+		parent.frames['selector'].document.getElementById('words_off').click();
+	}
+
+	if(main_or_word.match(/word/)){
+		document.getElementById('hide_word').click();
+	}
+	
+}
+
+
+function load_words_onChange(){
+	var menu= document.getElementById('select_words');
+ 	document.getElementById('word_num').value =  parseInt(menu.value.replace(/\d+\./,""));
+	document.getElementById('word_panel').style.display='inline';
+	document.getElementById('delete_word').style.display='inline';
+	remove_word_box();
+	display_word('select_words');
+}
+
+</script>
+
+
+	</head>
+	<body onLoad="main_or_word='main'";>
+
+<br>
+line num: <input type="text" id="screen_num" name="screen_num" size="1" value="1">
+<div id="line_panel" name="line_panel">
+<button title="Saves bounding box for current line." id="save" name="save" onClick="JavaScript:xmlhttpPost('save_line.pl');">save line</button>
+<button title="Increments number of line to change if select menu has a selected value." onClick="next_line();">next line</button>
+<button title="Increments number and letter of line if select menu has a selected value." onClick="next_column();">next column</button>
+<button id="delete_line" name="delete_line" title="deletes current line." onClick="ModalPopupsConfirm();">delete line</button>
+
+</div>
+<hr>
+<button id="show_word" title="display word div" onClick="show_word_box();" style="display:none";>show word box</button>
+<button id="hide_word" title="hide word div"  style="display:none;"  onClick="remove_word_box();document.getElementById('word_panel').style.display='none';document.getElementById('words_section').style.display='hidden';	parent.frames['mapper'].document.getElementById('div_main').style.display='inline';this.style.display='none';document.getElementById('show_word').style.display='inline';" style="display:inline";>hide word box</button>
+
+
+<div id="word_panel" name="word_panel">
+<button id="delete_word" title="deletes current word." style="display:none;" onClick="JavaScript:xmlhttpPost('remove_word.pl');">delete word</button>
+<button id="save_word" name="save_word" title="display word div" onClick="save_word();wait_and_next_word();" >save word</button>
+<button id="next_word" name="next_word" onClick="next_word();">next word</button>
+</div>
+<br>
+<form name="frmMain" action="#" method="post">
+<table><tr><td>
+<div id="div_select_lines" name="div_select_lines"></div>
+</td><td>
+<div id="words_section" style="display:none;">
+	word num: <input type="text" id="word_num" name="word_num" size="1" value="1">
+	<div id="div_select_words" name="div_select_words"></div>
+</div>
+</td></tr></table>
+</form>
+
+
+<form name = "form_line" name = "form_line"   >
+	<input type="hidden" size="4" id="num" name="num" /><br>
+<input type="hidden" size="4" id="file_name" name="file_name" /><br>
+<input type="hidden" size="4" id="images_path" name="images_path" /><br>
+<input type="hidden" size="4" id="save_path" name="save_path" />	<br>
+<input type="hidden" size="4" id="current_folder" name="current_folder" /><br>
+<input type="input" size="4" id="x1" name="x1">
+<input type="input" size="4" id="y1" name="y1">
+<input type="input" size="4" id="w" name="w">
+<input type="input" size="4" id="h" name="h">
+<input type="hidden" size="4" id="original_width" name="original_width" /><br>
+<input type="hidden" size="4" id="original_height" name="original_height" /><br><br>
+<input type="hidden" size="4" id="rotation" name="rotation" /><br>
+<input type="hidden" size="4" id="zoom" name="zoom">
+<input type="hidden" size="4" id="delete_target" name="delete_target" />
+<input type="hidden" size="4" id="border_width" name="border_width" /> 
+</form>
+
+<br>
+</td></tr></table>
+<form action ="line.pl" method="post" id="form_geo" name="form_geo">
+	<input type="hidden" id="geo_name" name="geo_name">
+	<input type="hidden" id="geo_path" name="geo_path">
+</form>
+
+
+
+	</body>
+</html>

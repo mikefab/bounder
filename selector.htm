@@ -1,0 +1,154 @@
+<html>
+	<head>
+		<script>
+
+function xmlhttpPost(strURL) {
+    var xmlHttpReq = false;
+    var self = this;
+    // Mozilla/Safari
+    if (window.XMLHttpRequest) {
+        self.xmlHttpReq = new XMLHttpRequest();
+    }
+    // IE
+    else if (window.ActiveXObject) {
+        self.xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    self.xmlHttpReq.open('POST', strURL, true);
+    self.xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    self.xmlHttpReq.onreadystatechange = function() {
+        if (self.xmlHttpReq.readyState == 4) {
+            updatepage(self.xmlHttpReq.responseText,strURL);
+        }
+    }
+    self.xmlHttpReq.send(getquerystring(strURL));
+}
+
+function getquerystring(strURL){
+
+		var save_path = parent.frames['list'].document.getElementById('geo_path').value;
+		var file_name = parent.frames['list'].document.getElementById('select_geo').value;
+		qstr = 'save_path=' + escape(save_path);  // NOTE: no '?' before querystring
+		qstr = qstr +'&file_name=' + escape(file_name);  // NOTE: no '?' before querystring
+
+		return qstr;
+}
+
+function updatepage(str,strURL){
+	handle_hash(str);
+}
+
+
+function handle_hash(str){
+	eval(str);
+	if(flag_words_on==1){
+		for(word in words){
+	  	var k=document.createElement('div');
+			var x1 = words[word].x1 * parent.frames['list'].document.getElementById('image_zoom').innerHTML;
+			var y1 = words[word].y1 * parent.frames['list'].document.getElementById('image_zoom').innerHTML;
+			var x2 = words[word].x2 * parent.frames['list'].document.getElementById('image_zoom').innerHTML;
+			var y2 = words[word].y2 * parent.frames['list'].document.getElementById('image_zoom').innerHTML;	
+			var h = y2-y1;
+			var w = x2-x1;
+	  	k.id=word;
+	  	k.name=word;
+	  	k.setAttribute("style", "position:absolute;left: " + x1 + "px; top: " + y1 + "px; width: " + w + "px; height: " + h + "px;  border:2px solid; border-color:orange;");
+	  	parent.frames['mapper'].document.body.appendChild(k);
+		}
+	}else{
+		for(word in words){
+			div = parent.frames['mapper'].document.getElementById(word);			
+	  	parent.frames['mapper'].document.body.removeChild(div);
+		}
+	}
+}
+
+function light_up_divs(){
+  document.getElementById('colors_panel').style.display="inline";
+  for(i=0;i<parent.line.document.getElementById('select_lines').options.length;i++){
+  	var k=document.createElement('div');
+	  var target_line_number = parent.line.document.getElementById('select_lines').options[i].value;
+
+
+	var x1 = parent.line.document.getElementById('select_lines').options[i].getAttribute('x1') * parent.frames['list'].document.getElementById('image_zoom').innerHTML;
+	var y1 = parent.line.document.getElementById('select_lines').options[i].getAttribute('y1') * parent.frames['list'].document.getElementById('image_zoom').innerHTML;
+	var x2 = parent.line.document.getElementById('select_lines').options[i].getAttribute('x2') * parent.frames['list'].document.getElementById('image_zoom').innerHTML;
+	var y2 = parent.line.document.getElementById('select_lines').options[i].getAttribute('y2') * parent.frames['list'].document.getElementById('image_zoom').innerHTML;	
+	var h = y2-y1;
+	var w = x2-x1;
+//		alert("x1: " + x1 + " x2: " + x2 + " y1: " + y1 + " y2: " + y2 + " h: " + h + " w: " + w);
+  	k.innerHTML=target_line_number;
+  	k.id=target_line_number;
+
+  	k.name=target_line_number;
+  	k.setAttribute("style", "position:absolute;left: " + x1 + "px; top: " + y1 + "px; width: " + w + "px; height: " + h + "px;  border:2px solid; border-color:orange;");
+  	parent.frames['mapper'].document.body.appendChild(k);
+
+  }	
+}
+
+
+function remove_divs(){
+  document.getElementById('colors_panel').style.display="none";
+  for(i=0;i<parent.line.document.getElementById('select_lines').options.length;i++){
+  var target_line_number = parent.line.document.getElementById('select_lines').options[i].value;
+
+  thing = parent.frames['mapper'].document.getElementById(target_line_number);
+		parent.frames['mapper'].document.body.removeChild(thing);
+	}
+}
+
+function set_bounder_color(even_odd, color){
+  for(i=0;i<parent.line.document.getElementById('select_lines').options.length;i++){
+  	var number = parent.frames['line'].document.getElementById('select_lines').options[i].value;
+		thing = parent.frames['mapper'].document.getElementById(number);
+
+//alert(parent.line.document.getElementById('select_lines').options[i].getAttribute('x1'));
+		if(even_odd.match(/even/)){
+		  if (i%2){
+
+  	 	}else{
+
+  	  	thing.style.borderColor=color;
+			}
+		}
+		if(even_odd.match(/odd/)){
+		
+		  if (i%2){
+			 	  	thing.style.borderColor=color;
+			}else{
+
+ 
+			}
+  	}
+	}	
+}
+</script> 
+    </head>
+    
+
+<button id="divs_on" name="divs_on" onClick="light_up_divs();flag_divs_on=true;document.getElementById('divs_off').style.display='inline';this.style.display='none';">show boxes</button>
+<button id="divs_off" name="divs_off" onClick="remove_divs();flag_divs_on=false;document.getElementById('divs_on').style.display='inline';this.style.display='none';" style="display:none;">hide boxes</button>
+
+<button id="words_on" name="words_on"   onClick="JavaScript:xmlhttpPost('get_words.pl');flag_words_on=1;document.getElementById('words_off').style.display='inline';this.style.display='none';">show words</button>
+<button id="words_off" name="words_off" onClick="JavaScript:xmlhttpPost('get_words.pl');flag_words_on=0;document.getElementById('words_on').style.display='inline';this.style.display='none';" style="display:none;">hide words</button>
+
+<form name="main_form" id="main_form" method="get" action="display.pl" target="display">
+
+<div id="colors_panel" style="display:none;" >
+<select id="color_even" name="color_even" onChange="set_bounder_color('even', this.value);" size="5">
+	<option>black</option>
+	<option>blue</option>
+	<option>green</option>
+	<option>orange</option>
+	<option>yellow</option>
+</select>
+<select id="color_odd" name="color_odd" onChange="set_bounder_color('odd', this.value);" size="5">
+	<option>black</option>
+	<option>blue</option>
+	<option>green</option>
+	<option>orange</option>
+	<option>yellow</option>
+</select>
+</div>
+</body>
+</html>

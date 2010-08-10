@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head id="head">
+ <script type="text/javascript" src="jquery/dragresize.js"></script> 
+ 
+	<style type="text/css"> 
+ 
+/* Required CSS classes: must be included in all pages using this script */
+ 
+/* Apply the element you want to drag/resize */
+.drsElement {
+ position: absolute;
+ border: 1px solid #333;
+}
+ 
+/*
+ The main mouse handle that moves the whole element.
+ You can apply to the same tag as drsElement if you want.
+*/
+.drsMoveHandle {
+ height: 20px;
+// background-color: #CCC;
+ border-bottom: 1px solid #666;
+ cursor: move;
+}
+ 
+/*
+ The DragResize object name is automatically applied to all generated
+ corner resize handles, as well as one of the individual classes below.
+*/
+.dragresize {
+ position: absolute;
+ width: 9px;
+ height: 9px;
+ font-size: 1px;
+ background: #EEE;
+ border: 1px solid #333;
+}
+ 
+/*
+ Individual corner classes - required for resize support.
+ These are based on the object name plus the handle ID.
+*/
+.dragresize-tl {
+ top: -8px;
+ left: -8px;
+ cursor: nw-resize;
+}
+.dragresize-tm {
+ top: -8px;
+ left: 50%;
+ margin-left: -4px;
+ cursor: n-resize;
+}
+.dragresize-tr {
+ top: -8px;
+ right: -8px;
+ cursor: ne-resize;
+}
+ 
+.dragresize-ml {
+ top: 50%;
+ margin-top: -4px;
+ left: -8px;
+ cursor: w-resize;
+}
+.dragresize-mr {
+ top: 50%;
+ margin-top: -4px;
+ right: -8px;
+ cursor: e-resize;
+}
+ 
+.dragresize-bl {
+ bottom: -8px;
+ left: -8px;
+ cursor: sw-resize;
+}
+.dragresize-bm {
+ bottom: -8px;
+ left: 50%;
+ margin-left: -4px;
+ cursor: s-resize;
+}
+.dragresize-br {
+ bottom: -8px;
+ right: -8px;
+ cursor: se-resize;
+}
+ 
+</style> 
+<script type="text/javascript"> 
+//<![CDATA[
+ 
+// Using DragResize is simple!
+// You first declare a new DragResize() object, passing its own name and an object
+// whose keys constitute optional parameters/settings:
+ 
+var dragresize = new DragResize('dragresize',
+ { minWidth: 0, minHeight: 0, minLeft: 0, minTop: 0, maxLeft: 10000, maxTop: 5000 });
+
+// Optional settings/properties of the DragResize object are:
+//  enabled: Toggle whether the object is active.
+//  handles[]: An array of drag handles to use (see the .JS file).
+//  minWidth, minHeight: Minimum size to which elements are resized (in pixels).
+//  minLeft, maxLeft, minTop, maxTop: Bounding box (in pixels).
+ 
+// Next, you must define two functions, isElement and isHandle. These are passed
+// a given DOM element, and must "return true" if the element in question is a
+// draggable element or draggable handle. Here, I'm checking for the CSS classname
+// of the elements, but you have have any combination of conditions you like:
+ 
+dragresize.isElement = function(elm)
+{
+ if (elm.className && elm.className.indexOf('drsElement') > -1) return true;
+
+};
+dragresize.isHandle = function(elm)
+{
+ if (elm.className && elm.className.indexOf('drsMoveHandle') > -1) return true;
+};
+ 
+// You can define optional functions that are called as elements are dragged/resized.
+// Some are passed true if the source event was a resize, or false if it's a drag.
+// The focus/blur events are called as handles are added/removed from an object,
+// and the others are called as users drag, move and release the object's handles.
+// You might use these to examine the properties of the DragResize object to sync
+// other page elements, etc.
+ compensate_height=0;
+dragresize.ondragfocus = function() {first_focus=1;document.getElementById('test1').innerHTML=first_focus; height1 = document.getElementById('div_main').style.height.replace(/px/,""); width1 = document.getElementById('div_main').style.width.replace(/px/,"");};
+dragresize.ondragstart = function(isResize) { };
+dragresize.ondragmove = function(isResize) { };
+dragresize.ondragend = function(isResize){ };
+dragresize.ondragblur = function() { };
+ 
+// Finally, you must apply() your DragResize object to a DOM node; all children of this
+// node will then be made draggable. Here, I'm applying to the entire document.
+dragresize.apply(document);
+ 
+//]]>
+</script> 
+
+		
+        <script type="text/javascript">
+//onload=function(){	
+//	var lF = document.getElementById('iframe_scripture').contentWindow;
+//	if(window.pageYOffset!=undefined){ //opera, firefox,& gecko browsers
+//		lF.onscroll = function(){
+//		document.getElementById('scroll_x').innerHTML= lF.pageXOffset;
+//  	document.getElementById('scroll_y').innerHTML= lF.pageYOffset;
+//		}
+//	}
+//	else{//IE	
+//		if(lF.document.documentElement)lF= lF.document.documentElement; 
+//		else lF=document.body; 
+//			lF.onscroll=function(){
+//			document.getElementById('leftIn').value= lF.scrollTop;
+//		}	
+//	}
+//}
+
+function line_bounder_mousedown(){
+	//document.getElementById('height_on').innerHTML=focus_first_time;
+
+}
+function line_bounder_mouseup(){
+
+	height2 = document.getElementById('div_main').style.height.replace(/px/,"");
+	width2 = document.getElementById('div_main').style.width.replace(/px/,"");
+	if(height1!=height2){ 
+		first_focus=0;
+		diff= height2-height1;
+		if(diff==10){
+			height2=height2-10;
+			document.getElementById('div_main').style.height= height2 + "px";
+		}
+
+	if(width1!=width2){ 
+		first_focus=0;
+		diff= width2-width1;
+		if(diff==10){
+			width2=width2-10;
+			document.getElementById('div_main').style.width= width2 + "px";
+		}
+	}
+
+		document.getElementById('test1').innerHTML=first_focus;
+
+		//document.getElementById('test2').innerHTML=compensate_height;
+	}
+
+}
+</script>
+	
+</head>
+
+<body id="body" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" rightmargin="0" bottommargin="0" >
+<div id="test1" style="display:none;"></div>
+<div id="test2" style="display:none;"></div>
+<div id="bounder_width"  style="display:none;">50</div>
+<div id="bounder_height" style="display:none;">100</div>
+<div id="bounder_border" style="display:none;">5</div>
+<div id="instructions" name="instructions">Begin by choosing an image or loading one locally.</div>
+<div id="preview" style="position:absolute;left:0px;" ><img onClick="border="0"  name="img" id="img"  src="blank.jpg" ></div>
+
+
+
+<div class="drsElement drsMoveHandle" onmousedown="line_bounder_mousedown();" onmouseup="line_bounder_mouseup();"
+ style="left: 150px; top: 280px;border-width:5px;border-color:orange; width: 50px; height: 100px;display:inline;
+  text-align: center" id="div_main"  name="div_main"> 
+
+</div> 
+
+</body>
+</html>
+
