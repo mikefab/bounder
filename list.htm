@@ -239,6 +239,18 @@ function display_select(select_name){ //User answered yes to saving geo file for
 function geo_onClick(){
 	resize_image();
 	parent.frames['line'].document.getElementById('delete_line').style.display="none";
+  document.getElementById('reset').click();
+		try {
+	parent.frames['line'].document.getElementById('select_words').style.display="none";
+	parent.frames['line'].document.getElementById('words_section').style.display="none";
+		} catch (e) {
+			if (e instanceof TypeError){
+
+			}
+		}
+
+
+
 	document.getElementById('select_zoom').options[0].selected=true;document.getElementById('image_zoom').innerHTML=1;
 	parent.frames['line'].document.getElementById('screen_num').value=1;
 	check_divs_r_on();
@@ -343,7 +355,7 @@ Secondary (image) zoom <div id="slider_zoom2" style="width:10em">1</div>
 </select>
 <span id="image_zoom" name="image_zoom">1</span>
 
-<div id="slider_rotate"  style="width:10em" style="display:inline;" ></div><button onClick="zoom(1);rotate(0);" style="display:inline;"> reset </button>
+<div id="slider_rotate"  style="width:10em" style="display:inline;" ></div><button id="reset" name="reset" onClick="zoom(1);rotate(0);" style="display:inline;"> reset </button>
 Rotate <div style="display:inline;" id="rotate" name="rotate">0</div> degrees
 <br>
 

@@ -132,6 +132,7 @@ function save_word(){
 function remove_word_box(){
 main_or_word="main";
 //	xmlhttpPost('save_word.pl');
+
 	parent.frames['mapper'].dragresize.maxTop=5000;
 	parent.frames['mapper'].dragresize.maxLeft=10000;
 	parent.frames['mapper'].dragresize.minTop=0;
@@ -217,6 +218,8 @@ function display_word(lines_or_words){
 	parent.frames['mapper'].dragresize.minHeight=h;
 	parent.frames['mapper'].dragresize.minwidth=w;
  	parent.frames['mapper'].document.body.appendChild(word);
+//	setTimeout("parent.frames['mapper'].document.getElementById('div_word').style.borderColor=parent.frames['selector'].document.getElementById('word_box_color').value;",500);
+parent.frames['mapper'].document.getElementById('div_word').style.borderColor=parent.frames['selector'].document.getElementById('word_box_color').value;
 }
 
 function wait_and_next_word(){
@@ -350,6 +353,8 @@ function show_word_box(){
 				document.getElementById('show_word').style.display='none';
 				document.getElementById('hide_word').style.display='inline';
 				document.getElementById('word_panel').style.display='inline';		
+				parent.frames['selector'].document.getElementById('word_selector_label').style.display='inline';		
+				parent.frames['selector'].document.getElementById('word_box_color').style.display='inline';		
 			}
 		} catch (e) {
 			if (e instanceof TypeError){
@@ -363,7 +368,7 @@ function load_lines_onChange(){
 	document.getElementById('delete_line').style.display='inline';
 	document.getElementById('delete_word').style.display='none';
 	document.getElementById('hide_word').click();
-	setTimeout("document.getElementById('next_word').click();",1000);
+	setTimeout("next_word();",1000);
 	main_or_word='main';
 	remove_word_box();	
 	load_words(document.getElementById('select_lines').value);
@@ -372,7 +377,6 @@ function load_lines_onChange(){
 
 function check_word_boxes(){
 	if(parent.frames['selector'].flag_words_on==1){
-		parent.frames['selector'].document.getElementById('words_off').click();
 	}
 
 	if(main_or_word.match(/word/)){
@@ -414,7 +418,7 @@ line num: <input type="text" id="screen_num" name="screen_num" size="1" value="1
 <div id="word_panel" name="word_panel">
 <button id="delete_word" title="deletes current word." style="display:none;" onClick="JavaScript:xmlhttpPost('remove_word.pl');">delete word</button>
 <button id="save_word" name="save_word" title="display word div" onClick="save_word();wait_and_next_word();" >save word</button>
-<button id="next_word" name="next_word" onClick="next_word();">next word</button>
+<button id="next_word" name="next_word" onClick="next_word();" style="display:none;">next word</button>
 </div>
 <br>
 <form name="frmMain" action="#" method="post">

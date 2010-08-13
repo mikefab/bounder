@@ -151,15 +151,15 @@ setTimeout("document.getElementById('words_on').click();",1000);
 </script> 
     </head>
     
-
+<table width="100%"><tr><td align="center">
 <button id="divs_on" name="divs_on" onClick="light_up_divs();set_bounder_color('even', document.getElementById('color_even').value);set_bounder_color('odd', document.getElementById('color_odd').value);flag_divs_on=true;document.getElementById('divs_off').style.display='inline';this.style.display='none';">show boxes</button>
 <button id="divs_off" name="divs_off" onClick="remove_divs();flag_divs_on=false;document.getElementById('divs_on').style.display='inline';this.style.display='none';" style="display:none;">hide boxes</button>
-
+</td><td align="center">
 <button id="words_on" name="words_on"   onClick="JavaScript:xmlhttpPost('get_words.pl');flag_words_on=1;document.getElementById('words_off').style.display='inline';this.style.display='none';document.getElementById('colors_panel_word').style.display='inline';">show words</button>
 <button id="words_off" name="words_off" onClick="document.getElementById('colors_panel_word').style.display='none;';JavaScript:xmlhttpPost('get_words.pl');flag_words_on=0;document.getElementById('words_on').style.display='inline';this.style.display='none'; document.getElementById('colors_panel_word').style.display='none';" style="display:none;">hide words</button>
-
-
-
+</td><td align="center"><div id="word_selector_label" >word box</div></td>
+</tr><tr>
+<td align="center">
 <form name="main_form" id="main_form" method="get" action="display.pl" target="display">
 
 <div id="colors_panel" style="display:none;" >
@@ -178,7 +178,7 @@ setTimeout("document.getElementById('words_on').click();",1000);
 	<option>yellow</option>
 </select>
 </div>
-
+</td><td align="center">
 <div id="colors_panel_word" style="display:none;">
 <select id="color_even_word" name="color_even_word" onClick="change_word_color();"  size="5">
 	<option>black</option>
@@ -195,7 +195,19 @@ setTimeout("document.getElementById('words_on').click();",1000);
 	<option>yellow</option>
 </select>
 </div>
+</td><td align="center">
 
+<select id="word_box_color" name="word_box_color" onChange="parent.frames['mapper'].document.getElementById('div_word').style.borderColor=this.value;"  size="5">
+	<option>black</option>
+	<option selected>blue</option>
+	<option>green</option>
+	<option>orange</option>
+	<option>red</option>
+	<option>yellow</option>
+</select>
+
+</td>
+</tr></table>
 
 
 </body>
