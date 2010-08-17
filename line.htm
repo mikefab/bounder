@@ -68,6 +68,9 @@ function getquerystring(strURL){
 		var y1 = form.y1.value;
 		var h = form.h.value;
 		var w = form.w.value;
+		var image_height = parent.frames['list'].document.getElementById('div_original_height').innerHTML;
+		var image_width = parent.frames['list'].document.getElementById('div_original_width').innerHTML;
+
 	  var rotation = parent.frames['list'].document.getElementById('rotate').innerHTML;
 	  var zoom = parent.frames['list'].document.getElementById('image_zoom').innerHTML;
 		qstr = 'save_path=' + escape(save_path);  // NOTE: no '?' before querystring
@@ -78,6 +81,8 @@ function getquerystring(strURL){
 		qstr = qstr +'&y1=' + escape(y1);  // NOTE: no '?' before querystring
 		qstr = qstr +'&h=' + escape(h);  // NOTE: no '?' before querystring
 		qstr = qstr +'&w=' + escape(w);  // NOTE: no '?' before querystring
+		qstr = qstr +'&image_height=' + escape(image_height);  // NOTE: no '?' before querystring
+		qstr = qstr +'&image_width=' + escape(image_width);  // NOTE: no '?' before querystring
 		qstr = qstr +'&rotation=' + escape(rotation);  // NOTE: no '?' before querystring
 		qstr = qstr +'&zoom=' + escape(zoom);  // NOTE: no '?' before querystring
 	}else if(strURL.match(/(remove_line|load_words)/)){
