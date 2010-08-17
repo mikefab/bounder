@@ -10,20 +10,21 @@
 
 <script>
 
+function find_geo_for_local_image(){
 
-//	var image_exists=0;
-//	for(i=0;i<parent.frames['list'].document.getElementById('select_geo').options.length;i++){
-//		if(parent.frames['list'].document.getElementById('select_geo').options[i].value.match(/$file_name/)){
-//			image_exists=1;
-//		}
-//   }
-//	if(image_exists==0){
-//		parent.frames['list'].document.getElementById('select_geo').options[parent.frames['list'].document.getElementById('select_geo').options.length]=new Option('$file_name');
-//		var l = parent.frames['list'].document.getElementById('select_geo').options.length;
-//		l--;
-//	parent.frames['list'].document.getElementById('select_geo').options[l].selected='true';
-//	}
+	var geo_file = document.getElementById('local_image').value.replace(/\.[^\.]+?$/,"");
+	for(i=0;i<document.getElementById('div_select_geo').childNodes[0].options.length;i++){
 
+		if(document.getElementById('div_select_geo').childNodes[0].options[i].value.match(geo_file)){
+			break;
+
+		}
+	}
+
+
+	parent.frames['list'].document.getElementById('select_geo').options[i].selected='true';
+
+}
 
 function resize_image(){
 	 setTimeout("parent.mapper.document.getElementById('preview').childNodes[0].width= document.getElementById('div_original_width').innerHTML * document.getElementById('image_zoom').innerHTML;", 1000);
@@ -64,10 +65,12 @@ function getquerystring(strURL){
 	    qstr = 'images_path=' + escape(images_path);  // NOTE: no '?' before querystring
 		}
 		if(strURL.match(/create/)){ //images_path
+
 	   	var save_path = document.getElementById('save_path').value;
 			var file_name = document.getElementById('image_name').innerHTML;
 			var image_width = document.getElementById('div_original_width').innerHTML;
 			var image_height = document.getElementById('div_original_height').innerHTML;
+
 	    qstr = 'save_path=' + escape(save_path);  // NOTE: no '?' before querystring
 	    qstr = qstr +'&file_name=' + escape(file_name);  // NOTE: no '?' before querystring
 	    qstr = qstr +'&image_width=' + escape(image_width);  // NOTE: no '?' before querystring
@@ -275,7 +278,7 @@ function do_mouse_up_stuff(dir,value){ //User clicked yes to saving geo file for
 
   document.getElementById('file_name').innerHTML  = value;
   parent.frames['line'].document.getElementById('file_name').value  = value;
-  setTimeout("parent.frames['line'].document.form_line.submit(0);",1000);
+  setTimeout("parent.frames['line'].document.form_line.submit(0);",500);
 }
 
 function check_divs_r_on(){
@@ -301,13 +304,14 @@ function ModalPopupsConfirm(image) {
 }  
 function ModalPopupsConfirmYes() {  
 
-JavaScript:xmlhttpPost("create_geo_file.pl");
+	JavaScript:xmlhttpPost("create_geo_file.pl");
 
   display_select(image_name);
 	document.getElementById('select_zoom').options[0].selected=true;
   document.getElementById('image_zoom').innerHTML=1;
   ModalPopups.Close("idConfirm1");  
-
+	document.getElementById('geo_path_button').click();
+	setTimeout("find_geo_for_local_image();",500);
 }  
 function ModalPopupsConfirmNo() {  
     ModalPopups.Cancel("idConfirm1");  
