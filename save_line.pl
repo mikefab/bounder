@@ -16,10 +16,16 @@ sub sort_complex{ #sorts a1a -> z2z
 	return(@array);
 }
 
+
 open(F,"geo/$form{save_path}/$form{file_name}")|| die "2 can't open geo/$current_path/$file_name $!";
 undef $/;
 $data = <F>;
 close F;
+
+
+$data=~s/<height=""/<height="$form{image_height}"/ if $data=~/<height="">/;
+$data=~s/<width=""/<width="$form{image_width}"/    if $data=~/<width="">/;
+
 
 
 @parts = split(/<data>/,$data);
@@ -47,8 +53,12 @@ $x2 = $form{x1} + $form{w};
 $y2 = $form{y1} + $form{h};
 
 $num = $form{num};
-$hash{$form{num}}= qq(\t\t<line num="$form{num}" x1="$form{x1}"  y1="$form{y1}" x2="$x2"  y2="$y2" zoom="$form{zoom}" rotation="$form{rotation}" >$hash{$form{num}});
+$hash{$form{num}}= qq(  <line num="$form{num}" x1="$form{x1}"  y1="$form{y1}" x2="$x2"  y2="$y2" zoom="$form{zoom}" rotation="$form{rotation}">$hash{$form{num}});
 $hash{$form{num}}.=qq(<\/line>) if $hash{$form{num}}!~/<\/line>/;
+
+
+
+
 
 	open(F,">geo/$form{save_path}/$form{file_name}")|| die "3 Can't open geo/$current_path/$file_name: $!";
 #	open(F,">test2.txt")|| die "3 Can't open geo/$current_path/$file_name: $!";
