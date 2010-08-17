@@ -28,15 +28,15 @@ foreach $line(@lines){
 $x2 = $form{x1} + $form{w};
 $y2 = $form{y1} + $form{h};
 
-$hash{"$form{num}.$form{word_num}"}=  qq(<word num="$form{num}.$form{word_num}" x1="$form{x1}"  y1="$form{y1}" x2="$x2"  y2="$y2" zoom="$form{zoom} rotation="$form{rotation}" />);
+$hash{"$form{num}.$form{word_num}"}=  qq(<word num="$form{num}.$form{word_num}" x1="$form{x1}"  y1="$form{y1}" x2="$x2"  y2="$y2"/>);
 
 
 $lines[0]=~s/<\/line>//;
-$line= qq(\t\t$lines[0]\n);
+$line= qq(    $lines[0]\n);
 for(sort keys%hash){
-	$line.=qq(\t\t\t$hash{$_}\n);
+	$line.=qq(      $hash{$_}\n);
 }
-$line.=qq(\t\t<\/line>);
+$line.=qq(    <\/line>);
 
 $data=~s/(\t*\s*<line num="$form{num}".+?<\/line>)/$line/;
 $data=~s/\*\*\*/\n/g;
